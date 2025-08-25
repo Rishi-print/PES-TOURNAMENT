@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<style>
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: url('uclformat.jpg') no-repeat center center / cover;
+    filter: blur(1px) brightness(1); /* blurred & darkened */
+    z-index: -2;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* extra dim layer */
+    z-index: -1;
+  }
+
+  /* Container styling */
+  .format-container {
+    background: rgba(0, 0, 0, 0.6); /* very transparent black */
+    padding: 20px;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+  }
+</style>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tournament Format</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-green-900 text-white font-sans">
+
+  <div class="max-w-3xl mx-auto mt-10 p-6 rounded-2xl shadow-xl format-container">
+    <h1 class="text-3xl font-bold text-center mb-6">📊 Tournament Format</h1>
+
+    <ol class="list-decimal list-inside space-y-4 text-lg leading-relaxed">
+      <li>
+        The tournament requires a <span class="font-bold">minimum of 4 players</span>. 
+        The total number of participants may vary.
+      </li>
+      <li>
+        After the <span class="font-bold">round-robin group stage</span>, 
+        the <span class="font-bold">top 4 players</span> will advance to the semi-finals.  
+        This will be followed by a <span class="font-bold">Final</span> and a <span class="font-bold">Third Place Playoff</span>.
+      </li>
+      <li>
+        <span class="font-bold">Group Stage Scoring:</span><br>
+        - Win: <span class="font-bold text-green-400">3 points</span><br>
+        - Draw: <span class="font-bold text-yellow-400">1 point</span><br>
+        - Loss: <span class="font-bold text-red-400">0 points</span>
+      </li>
+      <li>
+        If teams are tied on points, the ranking will be decided by 
+        <span class="font-bold">Goal Difference (GD)</span>.  
+        The player with the superior GD will secure the higher position.
+      </li>
+    </ol>
+
+    <div class="text-center mt-8">
+      <a href="EFOOTBALL CUP.html" 
+         class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded shadow-lg">
+         ⬅️ Back to Tournament
+      </a>
+    </div>
+  </div>
+
+</body>
+</html>
