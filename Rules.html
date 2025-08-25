@@ -1,6 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+<style>
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: url('referee.jpg') no-repeat center center / cover;
+    filter: blur(1px) brightness(1); /* blurred & darkened */
+    z-index: -2;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* extra dim layer for readability */
+    z-index: -1;
+  }
+
+  /* Optional: make rules text stand out more */
+  .rules-container {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+  }
+</style>
+
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tournament Rules</title>
@@ -8,7 +39,9 @@
 </head>
 <body class="bg-green-900 text-white font-sans">
 
-  <div class="max-w-3xl mx-auto mt-10 p-6 bg-green-800 rounded-2xl shadow-xl">
+  <div class="max-w-3xl mx-auto mt-10 p-6 rounded-2xl shadow-xl" 
+     style="background: rgba(0,0,0,0.5);">
+
     <h1 class="text-3xl font-bold text-center mb-6">⚖️ Tournament Rules</h1>
 
     <ol class="list-decimal list-inside space-y-4 text-lg leading-relaxed">
