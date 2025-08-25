@@ -4,6 +4,39 @@
   <meta charset="UTF-8">
   <title>SHOSTA PES Tournament</title>
   <style>
+
+/* Special Start Tournament button */
+.start-btn {
+margin-top: 25px;
+  display: inline-block;
+  background: linear-gradient(135deg, #ffd700, #ff8c00); /* golden glow */
+  color: black;
+  font-size: 1.4rem;
+  font-weight: 800;
+  padding: 16px 40px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 140, 0, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  animation: pulse 1.8s infinite;
+}
+
+.start-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 60px rgba(255, 140, 0, 0.9);
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+
 /* ===== SINGLE BACKGROUND IMAGE ===== */
 body::before {
   content: "";
@@ -249,7 +282,8 @@ body::after {
     <input type="number" id="numPlayers" min="2">
     <button onclick="addPlayerInputs()">Add Player Inputs</button>
     <div id="playerInputs"></div>
-    <button onclick="startTournament()">Start Tournament</button>
+    <button class="start-btn" onclick="startTournament()">🚀 Start Tournament</button>
+
   </div>
 
   <div id="schedule" class="hidden">
@@ -505,4 +539,3 @@ window.addEventListener("load", loadState);
 </script>
 </body>
 </html>
-
