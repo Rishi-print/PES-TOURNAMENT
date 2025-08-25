@@ -349,10 +349,10 @@ body::after {
     </table>
     <h2>Semi-Finals</h2>
     <div id="semiFinals"></div>
-    <h2>Final</h2>
-    <div id="final"></div>
     <h2>Third Place</h2>
-    <div id="thirdPlace"></div>
+<div id="thirdPlace"></div>
+<h2>Final</h2>
+<div id="final"></div>
 
 <!-- Winners / Podium -->
 <h2 style="margin-top:28px;">Winners</h2>
@@ -540,28 +540,37 @@ function recordSemiResult(idx, winner) {
 }
 
 function showFinalAndThird() {
-  $("#final").innerHTML = `${finalPair[0]} vs ${finalPair[1]} 
-    <select onchange="recordFinal(this.value)">
-      <option value="">Result</option>
-      <option value="${finalPair[0]}" ${finalWinner===finalPair[0]?"selected":""}>${finalPair[0]} Win</option>
-      <option value="${finalPair[1]}" ${finalWinner===finalPair[1]?"selected":""}>${finalPair[1]} Win</option>
-    </select>`;
-
+  // THIRD PLACE match first
   $("#thirdPlace").innerHTML = `${thirdPair[0]} vs ${thirdPair[1]} 
     <select onchange="recordThird(this.value)">
       <option value="">Result</option>
       <option value="${thirdPair[0]}" ${thirdWinner===thirdPair[0]?"selected":""}>${thirdPair[0]} Win</option>
       <option value="${thirdPair[1]}" ${thirdWinner===thirdPair[1]?"selected":""}>${thirdPair[1]} Win</option>
     </select>`;
+
+  // FINAL match after third place
+  $("#final").innerHTML = `${finalPair[0]} vs ${finalPair[1]} 
+    <select onchange="recordFinal(this.value)">
+      <option value="">Result</option>
+      <option value="${finalPair[0]}" ${finalWinner===finalPair[0]?"selected":""}>${finalPair[0]} Win</option>
+      <option value="${finalPair[1]}" ${finalWinner===finalPair[1]?"selected":""}>${finalPair[1]} Win</option>
+    </select>`;
 }
+
 
 function recordFinal(winner) {
   if (!winner) return;
   finalWinner = winner;
   finalist = finalPair.find(p => p !== winner);
   updatePodium();
+
+  // 🎉 Launch confetti after the champion is decided
+  launchConfetti();
+
   saveState();
 }
+
+
 
 function recordThird(winner) {
   if (!winner) return;
@@ -576,37 +585,31 @@ function updatePodium() {
   if (finalist) $("#finalistName").textContent = finalist;
   if (thirdWinner) $("#thirdName").textContent = thirdWinner;
 
-  // Show the podium once both final winner and third place are decided
+  // Show podium only once both are set
   if (finalWinner && thirdWinner) {
     $("#winners").classList.remove("hidden");
-
-    // 🎉 Confetti Celebration 🎉
-    launchConfetti();
   }
 }
 
-// Function to fire confetti
+
 function launchConfetti() {
-  // Duration of celebration
   const duration = 3 * 1000; // 3 seconds
   const end = Date.now() + duration;
 
   (function frame() {
-    // Confetti settings
     confetti({
-      particleCount: 5,
+      particleCount: 6,
       angle: 60,
       spread: 55,
-      origin: { x: 0 },
+      origin: { x: 0 }
     });
     confetti({
-      particleCount: 5,
+      particleCount: 6,
       angle: 120,
       spread: 55,
-      origin: { x: 1 },
+      origin: { x: 1 }
     });
 
-    // Keep going until duration is over
     if (Date.now() < end) {
       requestAnimationFrame(frame);
     }
