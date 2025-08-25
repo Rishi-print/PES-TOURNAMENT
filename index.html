@@ -2,8 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SHOSTA PES Tournament</title>
+  <title>EFOOTBALL 26 Tournament</title>
   <style>
+
+.form {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.dot.win  { background-color: #28a745; } /* green */
+.dot.loss { background-color: #dc3545; } /* red */
+.dot.draw { background-color: #6c757d; } /* gray */
+
 
 /* Podium / Winners display */
 .podium {
@@ -333,18 +351,20 @@ body::after {
     <h2>Standings</h2>
     <table id="standingsTable">
       <thead>
-        <tr>
-          <th>Player</th>
-          <th>Played</th>
-          <th>Won</th>
-          <th>Draw</th>
-          <th>Lost</th>
-          <th>GF</th>
-          <th>GA</th>
-          <th>GD</th>
-          <th>Points</th>
-        </tr>
-      </thead>
+  <tr>
+    <th>Player</th>
+    <th>Played</th>
+    <th>Won</th>
+    <th>Draw</th>
+    <th>Lost</th>
+    <th>GF</th>
+    <th>GA</th>
+    <th>GD</th>
+    <th>Points</th>
+    <th>Form</th> <!-- New column -->
+  </tr>
+</thead>
+
       <tbody></tbody>
     </table>
     <h2>Semi-Finals</h2>
@@ -455,24 +475,39 @@ function recordScore(idx, val, side) {
 }
 
 function recomputeStandings() {
-  players.forEach(p => standings[p] = {played:0, won:0, draw:0, lost:0, gf:0, ga:0, gd:0, points:0});
+  players.forEach(p => standings[p] = {
+    played:0, won:0, draw:0, lost:0, gf:0, ga:0, gd:0, points:0,
+    form: [] // track results
+  });
+
   matches.forEach(m => {
     if (m.hg===null || m.ag===null) return;
+
     standings[m.h].played++;
     standings[m.a].played++;
     standings[m.h].gf += m.hg;
     standings[m.h].ga += m.ag;
     standings[m.a].gf += m.ag;
     standings[m.a].ga += m.hg;
-    if (m.hg>m.ag) {
+
+    if (m.hg > m.ag) {
       standings[m.h].won++; standings[m.h].points+=3; standings[m.a].lost++;
-    } else if (m.ag>m.hg) {
+      standings[m.h].form.push("W"); standings[m.a].form.push("L");
+    } else if (m.ag > m.hg) {
       standings[m.a].won++; standings[m.a].points+=3; standings[m.h].lost++;
+      standings[m.a].form.push("W"); standings[m.h].form.push("L");
     } else {
-      standings[m.h].draw++; standings[m.h].points++; standings[m.a].draw++; standings[m.a].points++;
+      standings[m.h].draw++; standings[m.a].draw++;
+      standings[m.h].points++; standings[m.a].points++;
+      standings[m.h].form.push("D"); standings[m.a].form.push("D");
     }
   });
-  players.forEach(p=>standings[p].gd=standings[p].gf-standings[p].ga);
+
+  players.forEach(p=>{
+    standings[p].gd = standings[p].gf - standings[p].ga;
+    // Keep only last 5 results
+    standings[p].form = standings[p].form.slice(-5);
+  });
 }
 
 function updateTable() {
@@ -486,6 +521,11 @@ function updateTable() {
       return a[0].localeCompare(b[0]);
     })
     .forEach(([p,s])=>{
+      const formDots = s.form.map(r=>{
+        if (r==="W") return `<span class="dot win"></span>`;
+        if (r==="L") return `<span class="dot loss"></span>`;
+        return `<span class="dot draw"></span>`;
+      }).join("");
       body.innerHTML += `<tr>
         <td>${p}</td>
         <td>${s.played}</td>
@@ -496,9 +536,11 @@ function updateTable() {
         <td>${s.ga}</td>
         <td>${s.gd}</td>
         <td>${s.points}</td>
+        <td class="form">${formDots}</td>
       </tr>`;
     });
 }
+
 
 function setupSemis() {
   const sorted = Object.entries(standings).sort((a,b)=>{
