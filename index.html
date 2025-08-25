@@ -5,6 +5,43 @@
   <title>SHOSTA PES Tournament</title>
   <style>
 
+/* Podium / Winners display */
+.podium {
+  max-width: 900px;
+  margin: 24px auto;
+  display: grid;
+  gap: 12px;
+}
+.podium-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0,0,0,.35);
+  letter-spacing: .5px;
+}
+.podium-card .label { opacity: .9; }
+.podium-card .name { font-size: 1.3rem; }
+
+.podium-card.gold {
+  background: linear-gradient(135deg,#d4af37,#ffdf6b);
+  color: #2b1f00;
+  box-shadow: 0 0 12px rgba(255,215,0,.6);
+}
+.podium-card.silver {
+  background: linear-gradient(135deg,#cfd6e6,#eaeef6);
+  color: #1f2430;
+  box-shadow: 0 0 12px rgba(176,196,222,.5);
+}
+.podium-card.bronze {
+  background: linear-gradient(135deg,#cd7f32,#e0a371);
+  color: #2b1a0a;
+  box-shadow: 0 0 12px rgba(205,127,50,.55);
+}
+
+
 /* Special Start Tournament button */
 .start-btn {
 margin-top: 25px;
@@ -312,6 +349,25 @@ body::after {
     <div id="final"></div>
     <h2>Third Place</h2>
     <div id="thirdPlace"></div>
+
+<!-- Winners / Podium -->
+<h2 style="margin-top:28px;">Winners</h2>
+<div id="winners" class="podium hidden">
+  <div class="podium-card gold">
+    <span class="label">🥇 Winner:</span>
+    <span id="winnerName" class="name">TBD</span>
+  </div>
+  <div class="podium-card silver">
+    <span class="label">🥈 Finalist:</span>
+    <span id="finalistName" class="name">TBD</span>
+  </div>
+  <div class="podium-card bronze">
+    <span class="label">🥉 Third Place:</span>
+    <span id="thirdName" class="name">TBD</span>
+  </div>
+</div>
+
+
     <br>
     <button id="resetBtn" class="hidden">Reset Tournament</button>
   </div>
@@ -327,6 +383,10 @@ let semiWinners = [null, null];
 let semiLosers = [null, null];
 let finalPair = null;
 let thirdPair = null;
+let finalWinner = null;
+let finalist = null;
+let thirdWinner = null;
+
 
 function addPlayerInputs() {
   const n = parseInt($("#numPlayers").value);
@@ -479,30 +539,54 @@ function showFinalAndThird() {
   $("#final").innerHTML = `${finalPair[0]} vs ${finalPair[1]} 
     <select onchange="recordFinal(this.value)">
       <option value="">Result</option>
-      <option value="${finalPair[0]}">${finalPair[0]} Win</option>
-      <option value="${finalPair[1]}">${finalPair[1]} Win</option>
+      <option value="${finalPair[0]}" ${finalWinner===finalPair[0]?"selected":""}>${finalPair[0]} Win</option>
+      <option value="${finalPair[1]}" ${finalWinner===finalPair[1]?"selected":""}>${finalPair[1]} Win</option>
     </select>`;
+
   $("#thirdPlace").innerHTML = `${thirdPair[0]} vs ${thirdPair[1]} 
     <select onchange="recordThird(this.value)">
       <option value="">Result</option>
-      <option value="${thirdPair[0]}">${thirdPair[0]} Win</option>
-      <option value="${thirdPair[1]}">${thirdPair[1]} Win</option>
+      <option value="${thirdPair[0]}" ${thirdWinner===thirdPair[0]?"selected":""}>${thirdPair[0]} Win</option>
+      <option value="${thirdPair[1]}" ${thirdWinner===thirdPair[1]?"selected":""}>${thirdPair[1]} Win</option>
     </select>`;
 }
 
 function recordFinal(winner) {
-  $("#final").innerHTML += `<div><b>🏆 Champion: ${winner}</b></div>`;
-  saveState();
-}
-function recordThird(winner) {
-  $("#thirdPlace").innerHTML += `<div><b>🥉 Third Place: ${winner}</b></div>`;
+  if (!winner) return;
+  finalWinner = winner;
+  finalist = finalPair.find(p => p !== winner);
+  updatePodium();
   saveState();
 }
 
+function recordThird(winner) {
+  if (!winner) return;
+  thirdWinner = winner;
+  updatePodium();
+  saveState();
+}
+
+
+function updatePodium() {
+  if (finalWinner) $("#winnerName").textContent = finalWinner;
+  if (finalist) $("#finalistName").textContent = finalist;
+  if (thirdWinner) $("#thirdName").textContent = thirdWinner;
+
+  // Show the podium once both final winner and third place are decided
+  if (finalWinner && thirdWinner) {
+    $("#winners").classList.remove("hidden");
+  }
+}
+
+
 function saveState() {
-  const state = { players,matches,standings,semiPairs,semiWinners,semiLosers,finalPair,thirdPair };
+  const state = { 
+    players,matches,standings,semiPairs,semiWinners,semiLosers,finalPair,thirdPair,
+    finalWinner, finalist, thirdWinner
+  };
   localStorage.setItem("tournamentData", JSON.stringify(state));
 }
+
 
 function loadState() {
   const saved = localStorage.getItem("tournamentData");
@@ -516,6 +600,10 @@ function loadState() {
   semiLosers = state.semiLosers||[null,null];
   finalPair = state.finalPair||null;
   thirdPair = state.thirdPair||null;
+  finalWinner = state.finalWinner || null;
+  finalist = state.finalist || null;
+  thirdWinner = state.thirdWinner || null;
+
   if (players.length) {
     $("#setup").classList.add("hidden");
     $("#schedule").classList.remove("hidden");
@@ -525,6 +613,7 @@ function loadState() {
     updateTable();
     if (semiPairs.length) showSemiFinals();
     if (finalPair) showFinalAndThird();
+    updatePodium();
   }
 }
 
