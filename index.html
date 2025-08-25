@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>SHOSTA PES Tournament</title>
   <style>
-
 /* ===== SINGLE BACKGROUND IMAGE ===== */
 body::before {
   content: "";
@@ -12,7 +11,7 @@ body::before {
   top: 0; left: 0;
   width: 100%; height: 100%;
   background: url('yourimage.jpg') no-repeat center center / cover;
-  filter: blur(2px) brightness(0.9); /* blur + darken */
+  filter: blur(1px) brightness(1); /* blur + darken */
   z-index: -2;
 }
 
@@ -22,11 +21,11 @@ body::after {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.4); 
+  background: rgba(0, 0, 0, 0.5); 
   z-index: -1;
 }
 
-    
+
 .rules-btn {
   display: inline-block;
   background-color: #008000;   /* green like your other buttons */
@@ -204,43 +203,17 @@ body::after {
         margin: 8px auto;
         display: block;
       }
-<style>
-  body::before {
-    content: "";
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: url('referee.jpg') no-repeat center center / cover;
-    filter: blur(1px) brightness(1); /* blurred & darkened */
-    z-index: -2;
-  }
 
       .match {
         width: 95%;
         font-size: 0.85rem;
       }
     }
-  body::after {
-    content: "";
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.4); /* extra dim layer for readability */
-    z-index: -1;
-  }
 
     @media (max-width: 480px) {
       h2, h3 {
         font-size: 1.2rem;
       }
-  /* Optional: make rules text stand out more */
-  .rules-container {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 12px;
-    backdrop-filter: blur(5px);
-  }
-</style>
 
       table, th, td {
         font-size: 0.75rem;
@@ -254,10 +227,6 @@ body::after {
     }
     .hidden {display:none!important;}
   </style>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tournament Rules</title>
-  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
 <body class="bg-green-900 text-white font-sans">
@@ -267,54 +236,10 @@ body::after {
     <a href="Rules.html" 
    class="rules-btn">
    ⚖️ Tournament Rules
-  <div class="max-w-3xl mx-auto mt-10 p-6 rounded-2xl shadow-xl" 
-     style="background: rgba(0,0,0,0.5);">
-
-    <h1 class="text-3xl font-bold text-center mb-6">⚖️ Tournament Rules</h1>
-
-    <ol class="list-decimal list-inside space-y-4 text-lg leading-relaxed">
-      <li>
-        A player cannot play back passes with the goalkeeper inside the penalty box 
-        more than <span class="font-bold">three consecutive times</span> during a game.
-      </li>
-      <li>
-        In case of lag, players must record at least a 
-        <span class="font-bold">10-second video</span> as proof to establish the issue.
-      </li>
-      <li>
-        All pending matches must be completed by 
-        <span class="font-bold">Sunday of the ongoing week</span>.  
-        If not, the match will be awarded as a win to the player willing to play.
-      </li>
-      <li>
-        Tournament records will be maintained on the website by 
-        <span class="font-bold">admins selected via nomination</span>.
-      </li>
-    </ol>
-
-    <div class="mt-10">
-      <h2 class="text-2xl font-bold mb-4">⚙️ Settings to be Followed</h2>
-      <p class="mb-6 text-lg">
-        All matches in this tournament must strictly adhere to the following in-game settings.  
-        Please ensure these <span class="font-bold">exact settings</span> are applied before starting a game.
-      </p>
-
-      <div class="space-y-6">
-        <img src="settings-1.jpg" alt="Match Settings Page 1" class="rounded-2xl shadow-lg border border-gray-600">
-        <img src="settings-2.jpg" alt="Match Settings Page 2" class="rounded-2xl shadow-lg border border-gray-600">
-      </div>
-    </div>
-
-
-    <div class="text-center mt-8">
-      <a href="EFOOTBALL CUP.html" 
-   class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded shadow-lg">
-   ⬅️ Back to Tournament
 </a>
 
 
-    </div>
-</div>
+  </div>
 
   <!-- Your tournament code starts here -->
 
@@ -580,5 +505,3 @@ window.addEventListener("load", loadState);
 </script>
 </body>
 </html>
-
-
