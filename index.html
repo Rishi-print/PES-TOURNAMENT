@@ -320,7 +320,6 @@ body::after {
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
 
-<body>
 <body class="bg-green-900 text-white font-sans">
 
   <!-- Navigation Buttons at the Top -->
@@ -428,14 +427,56 @@ function startTournament() {
     const name = $(`#p${i}`).value.trim() || `Player${i+1}`;
     players.push(name);
   }
-  matches = [];
-  standings = {};
-  players.forEach(p => standings[p] = {played:0, won:0, draw:0, lost:0, gf:0, ga:0, gd:0, points:0});
-  for (let i=0;i<players.length;i++) {
-    for (let j=i+1;j<players.length;j++) {
-      matches.push({h: players[i], a: players[j], hg:null, ag:null});
-    }
+
+  // If odd, add dummy BYE
+  if (players.length % 2 !== 0) {
+    players.push("BYE");
   }
+
+  standings = {};
+  players.forEach(p => {
+    if (p !== "BYE") {
+      standings[p] = {played:0, won:0, draw:0, lost:0, gf:0, ga:0, gd:0, points:0};
+    }
+  });
+
+  matches = [];
+  const numPlayers = players.length;
+  const numRounds = numPlayers - 1;
+  const half = numPlayers / 2;
+
+  // Round robin schedule using circle method
+  let rotation = players.slice(1); // exclude first player
+
+  for (let round=0; round<numRounds; round++) {
+    let roundMatches = [];
+
+    const fixed = players[0];
+    const opponent = rotation[rotation.length-1];
+    if (fixed !== "BYE" && opponent !== "BYE") {
+      roundMatches.push({h: fixed, a: opponent, hg:null, ag:null, leg:`Round ${round+1}`});
+    }
+
+    for (let i=0; i<half-1; i++) {
+      const home = rotation[i];
+      const away = rotation[rotation.length-1-i-1];
+      if (home !== "BYE" && away !== "BYE") {
+        roundMatches.push({h: home, a: away, hg:null, ag:null, leg:`Round ${round+1}`});
+      }
+    }
+
+    matches.push(...roundMatches);
+
+    // Rotate
+    rotation.unshift(rotation.pop());
+  }
+
+  // Second half (swap home/away)
+  const secondLeg = matches.map(m => ({
+    h: m.a, a: m.h, hg:null, ag:null, leg: m.leg.replace("Round", "Round (2nd Leg)")
+  }));
+  matches = [...matches, ...secondLeg];
+
   $("#setup").classList.add("hidden");
   $("#schedule").classList.remove("hidden");
   $("#resetBtn").classList.remove("hidden");
@@ -450,13 +491,14 @@ function renderMatches() {
   matches.forEach((m, idx) => {
     const row = document.createElement("div");
     row.className = "match";
+    // Clearer home/away display and show leg (1st/2nd)
     row.innerHTML = `
-      <div><b>${m.h}</b> vs <b>${m.a}</b></div>
-      <div>
-        <input type="number" min="0" value="${m.hg!==null?m.hg:""}" 
+      <div><b>${m.h}</b> (Home) vs <b>${m.a}</b> (Away) <small style="opacity:0.9">— ${m.leg}</small></div>
+      <div style="margin-top:8px;">
+        <input type="number" min="0" value="${m.hg!=null?m.hg:''}"
           onchange="recordScore(${idx}, this.value, 'H')" placeholder="Goals ${m.h}">
         -
-        <input type="number" min="0" value="${m.ag!==null?m.ag:""}" 
+        <input type="number" min="0" value="${m.ag!=null?m.ag:''}"
           onchange="recordScore(${idx}, this.value, 'A')" placeholder="Goals ${m.a}">
       </div>`;
     list.appendChild(row);
@@ -673,7 +715,8 @@ function loadState() {
   if (!saved) return;
   const state = JSON.parse(saved);
   players = state.players||[];
-  matches = state.matches||[];
+  // Normalize saved matches so older saves (without leg) still work
+  matches = (state.matches||[]).map(m=>({h:m.h,a:m.a,hg:m.hg!=null?m.hg:null,ag:m.ag!=null?m.ag:null, leg: m.leg || '1st Leg'}));
   standings = state.standings||{};
   semiPairs = state.semiPairs||[];
   semiWinners = state.semiWinners||[null,null];
