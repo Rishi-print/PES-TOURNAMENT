@@ -315,6 +315,11 @@ body::after {
     }
     .hidden {display:none!important;}
   </style>
+
+<!-- Add inside <head> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
 </head>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
@@ -346,6 +351,10 @@ body::after {
 
   <div id="schedule" class="hidden">
     <h2>Round Robin Matches</h2>
+
+<button id="downloadPdfBtn">📥 Download Schedule (PDF)</button>
+
+
     <div id="matches"></div>
     <h2>Standings</h2>
     <table id="standingsTable">
@@ -473,7 +482,7 @@ function startTournament() {
 
   // Second half (swap home/away)
   const secondLeg = matches.map(m => ({
-    h: m.a, a: m.h, hg:null, ag:null, leg: m.leg.replace("Round", "Round (2nd Leg)")
+    h: m.a, a: m.h, hg:null, ag:null, leg: m.leg.replace("Round", "(2nd Leg) Round")
   }));
   matches = [...matches, ...secondLeg];
 
@@ -748,6 +757,76 @@ $("#resetBtn").addEventListener("click", () => {
 });
 
 window.addEventListener("load", loadState);
+
+document.getElementById("downloadPdfBtn").addEventListener("click", () => {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  let y = 20;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text("EFOOTBALL 26 Tournament Schedule", 105, y, { align: "center" });
+  y += 15;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(12);
+
+  // Round Robin Matches
+doc.text("Round Robin Matches:", 10, y);
+y += 8;
+matches.forEach((m) => {
+  const line = `${m.leg}: ${m.h} (Home) vs ${m.a} (Away) ${m.hg != null && m.ag != null ? `(${m.hg}-${m.ag})` : ""}`;
+
+  if (m.hg != null && m.ag != null) {
+    // Completed match → highlight in green
+    doc.setFillColor(200, 255, 200); // light green
+    doc.rect(12, y - 5, 180, 8, "F"); // rectangle behind text
+  }
+
+  doc.setTextColor(0, 0, 0); // ensure black text
+  doc.text(line, 15, y);
+
+  y += 7;
+  if (y > 270) { doc.addPage(); y = 20; }
+});
+
+
+  y += 10;
+  doc.text("Semi Finals:", 10, y);
+  y += 8;
+  semiPairs.forEach((pair, i) => {
+    if (pair) {
+      const result = semiWinners[i] ? `Winner: ${semiWinners[i]}` : "";
+      doc.text(`${pair[0]} vs ${pair[1]} ${result}`, 15, y);
+      y += 7;
+    }
+  });
+
+  y += 10;
+  if (thirdPair) {
+    doc.text("Third Place:", 10, y);
+    y += 8;
+    doc.text(`${thirdPair[0]} vs ${thirdPair[1]} ${thirdWinner ? `Winner: ${thirdWinner}` : ""}`, 15, y);
+    y += 10;
+  }
+
+  if (finalPair) {
+    doc.text("Final:", 10, y);
+    y += 8;
+    doc.text(`${finalPair[0]} vs ${finalPair[1]} ${finalWinner ? `Winner: ${finalWinner}` : ""}`, 15, y);
+    y += 10;
+  }
+
+  if (finalWinner) {
+    y += 10;
+    doc.setFont("helvetica", "bold");
+    doc.text(`🏆 Winner: ${finalWinner}`, 10, y);
+  }
+
+  doc.save("Tournament_Schedule.pdf");
+});
+
+
 </script>
 </body>
 </html>
